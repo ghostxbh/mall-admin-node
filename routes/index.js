@@ -1,9 +1,9 @@
+/**
+ * Create by xbh 2019-05-29 集中路由管理
+ */
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+router.use('/role',require('./api/role'));
 
 module.exports = router;
