@@ -5,5 +5,6 @@ var express = require('express');
 var router = express.Router();
 
 router.use('/role',require('./api/role'));
+router.use('/permission',require('./api/permission'));
 
 module.exports = router;

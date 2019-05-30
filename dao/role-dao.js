@@ -23,12 +23,17 @@ const roleDao = {
         if (sort || sort === 0) set += `sort=${sort}`;
         if (set.substring(set.length - 1, set.length) === ',') set = set.substring(0, set.length - 1);
         let sql = `update ums_role set ${set} where id=${id}`;
-        return Mysql.excute(sql);
+        return Mysql.transExcute(sql);
     },
     //删
     delete(id) {
         let sql = `delete from ums_role where id=?`;
-        return Mysql.excute(sql, [id]);
+        return Mysql.transExcute(sql, [id]);
+    },
+    //列表
+    list() {
+        let sql = `select id,name,description,admin_count,create_time,status,sort from ums_role`;
+        return Mysql.fetch(sql);
     },
 };
 
