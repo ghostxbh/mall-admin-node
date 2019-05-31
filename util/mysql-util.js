@@ -78,7 +78,36 @@ const Mysql = {
                 });
             });
         });
-    }
+    },
+    //事务执行
+    transExcute: (sql, ps) => {
+        return new Promise((resolve, reject) => {
+            let pool = Mysql.getPool(writeConfig, 'W');
+            pool.getConnection((err, conn) => {
+                conn.beginTransaction(e => {
+                    if (e) return reject('开启事务失败');
+                    else {
+                        conn.query(sql, ps, (e, v, f) => {
+                            if (e) {
+                                return conn.rollback(() => {
+                                    reject('插入失败数据回滚');
+                                })
+                            } else {
+                                conn.commit((e) => {
+                                    if (e) {
+                                        reject('事务提交失败');
+                                    } else {
+                                        resolve(v);
+                                    }
+                                });
+                            }
+                            conn.release();
+                        });
+                    }
+                });
+            });
+        });
+    },
 };
 
 module.exports = Mysql;
