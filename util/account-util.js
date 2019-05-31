@@ -14,4 +14,16 @@ function md5(pwd) {
     return crypto.createHash('md5').update(data.toString()).digest('hex');
 }
 
-module.exports = {md5};
+/**
+ * 获取IP
+ * @param req
+ * @return {*|string}
+ */
+function getClientIp(req) {
+    return req.headers['x-forwarded-for'] ||
+        req.connection.remoteAddress ||
+        req.socket.remoteAddress ||
+        req.connection.socket.remoteAddress;
+}
+
+module.exports = {md5, getClientIp};

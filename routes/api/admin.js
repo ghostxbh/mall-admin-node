@@ -5,7 +5,7 @@ var express = require('express');
 var router = express.Router();
 const result = require('../../model/common-result');
 const adminService = require('../../service/admin-service');
-
+const jwt = require('../../conf/doc').jwt;
 /**
  * @api {post} /admin/register 注册
  * @apiGroup admin
@@ -52,7 +52,7 @@ router.post('/register', function (req, res, next) {
  * {
  *  "code": 200,
  *  "message": "操作成功",
- *  "data": Array
+ *  "data": Map
  * }
  * @apiErrorExample {json} Error-Response:
  *  HTTP/1.1 500 error
@@ -64,9 +64,45 @@ router.post('/register', function (req, res, next) {
  */
 router.post('/login', function (req, res, next) {
     let {username, password} = req.body;
-    adminService.login(username, password).then(data => {
-        if (data.status) res.json(result.success(data.data));
-        else res.json(result.failed(data.data));
+    adminService.login(username, password).then(value => {
+        if (value.status) {
+            let tokenMap = new Map();
+            tokenMap.set("token", value.data);
+            tokenMap.set("tokenHead", jwt.tokenHead);
+            res.json(result.success(tokenMap));
+        } else res.json(result.failed(value.data));
+    }).catch(e => res.json(result.exceptionFailed(e.message)));
+});
+
+/**
+ * @api {get} /admin/token/refresh 刷新token
+ * @apiGroup admin
+ * @apiVersion 1.0.0
+ * @apiName refresh
+ * @apiSuccessExample {json} Success-Response:
+ *  HTTP/1.1 200 OK
+ * {
+ *  "code": 200,
+ *  "message": "操作成功",
+ *  "data": Map
+ * }
+ * @apiErrorExample {json} Error-Response:
+ *  HTTP/1.1 500 error
+ * {
+ *  "code": 500,
+ *  "message": "操作失败",
+ * }
+ * @apiSampleRequest /admin/token/refresh
+ */
+router.post('/token/refresh', function (req, res, next) {
+    let token = req.headers[jwt.tokenHeader];
+    adminService.refreshToken(token).then(value => {
+        if (value.status) {
+            let tokenMap = new Map();
+            tokenMap.set("token", value.data);
+            tokenMap.set("tokenHead", jwt.tokenHead);
+            res.json(result.success(tokenMap));
+        } else res.json(result.failed(value.data));
     }).catch(e => res.json(result.exceptionFailed(e.message)));
 });
 module.exports = router;
