@@ -4,7 +4,9 @@
 var express = require('express');
 var router = express.Router();
 
-router.use('/role',require('./api/role'));
-router.use('/permission',require('./api/permission'));
+router.use('/role', require('./api/role'));
+router.use('/permission', require('./api/permission'));
+router.use('/memberLevel', require('./api/member-level'));
+router.use('/admin', require('./api/admin'));
 
 module.exports = router;
