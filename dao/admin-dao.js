@@ -28,6 +28,11 @@ const adminDao = {
         let sql = `update ums_role set ${set} where id=${id}`;
         return Mysql.transExcute(sql);
     },
+    //删
+    delete(id) {
+        let sql = `delete from ums_admin where id=?`;
+        return Mysql.transExcute(sql, [id]);
+    },
     //登陆时间
     updateLoginTime(username, date) {
         let sql = `update ums_role set login_time=? where username=?`;
@@ -37,6 +42,19 @@ const adminDao = {
     repeat(username) {
         let sql = `select ${fields} from ums_admin where username=?`;
         return Mysql.fetch(sql, [username]);
+    },
+    //名称模糊查询
+    listByName(name, pageSize, pageNum) {
+        let where = `where username like '%${name}%' or nick_name like '%${name}%'`;
+        let limit = `limit ${(pageNum - 1) * pageSize},${pageSize}`;
+        let sql = `select ${fields} from ums_admin ${where} ${limit};`;
+        let count = `select count(*) as count from ums_admin ${where};`;
+        return Mysql.fetch(sql + count);
+    },
+    //用户信息
+    adminById(id) {
+        let sql = `select ${fields} from ums_admin where id=?`;
+        return Mysql.fetch(sql, [id]);
     },
 };
 

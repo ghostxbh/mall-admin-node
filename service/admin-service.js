@@ -42,7 +42,8 @@ const mlService = {
             result.data = '密码不正确';
         } else {
             //加密admin - token
-            let token = jwt.sign({foo: 'bar'}, admin);
+            let token = jwt.sign({username: username}, doc.jwt.secret, {expiresIn: doc.jwt.expiration});
+            console.log('token生成：%s', token);
             mlService.updateLoginTime(admin.username);
             mlService.insertLoginLog(req, admin);
             result.data = token;
@@ -61,10 +62,56 @@ const mlService = {
         let loginLog = {ip, createTime, adminId: admin.id};
         return allDao.insert(loginLog);
     },
+    //TODO 刷新token
     refreshToken(oldToken) {
         let result = {status: true};
-        let token = oldToken.substring(doc.jwt.tokenHead.length);
-
+        result.data = oldToken.substring(doc.jwt.tokenHead.length);
+        return Promise.resolve(result);
+    },
+    //用户信息
+    admin: async (token) => {
+        let user = jwt.verify(token, doc.jwt.secret);
+        let admin = await adminDao.repeat(user.username);
+        console.log('获取用户信息 %s', user.username);
+        return Promise.resolve(admin)
+    },
+    //列表
+    list: async (name, pageSize, pageNum) => {
+        //处理字符串问题
+        if (typeof pageSize === "string") pageSize = parseInt(pageSize);
+        if (typeof pageNum === "string") pageNum = parseInt(pageNum);
+        //配置分页数据
+        let result = {status: true, data: {pageSize, pageNum}};
+        let [list, [total]] = adminDao.listByName(name, pageSize, pageNum);
+        if (list) {
+            result.data.list = list;
+            result.data.total = total.count;
+            result.data.totalPage = Math.ceil(total.count / pageSize);
+        } else {
+            result.status = false;
+            result.data = '查询列表失败';
+        }
+        return Promise.resolve(data);
+    },
+    //用户信息
+    adminById(id) {
+        return adminDao.adminById(id);
+    },
+    //改
+    update(id, admin) {
+        admin.id = id;
+        return adminDao.update(admin);
+    },
+    //删
+    delete: async (id) => {
+        let result = {status: true};
+        let {affectedRows} = await adminDao.delete(id);
+        if (affectedRows > 0) result.data = affectedRows;
+        else {
+            result.status = false;
+            result.data = '删除失败';
+        }
+        return result;
     },
 };
 module.exports = mlService;
