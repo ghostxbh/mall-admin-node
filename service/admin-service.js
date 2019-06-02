@@ -113,5 +113,9 @@ const mlService = {
         }
         return result;
     },
+    updateRole(adminId,roleIds){
+        let result = {status: true};
+        
+    },
 };
 module.exports = mlService;
