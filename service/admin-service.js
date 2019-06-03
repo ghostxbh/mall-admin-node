@@ -3,6 +3,8 @@
  */
 const adminDao = require('../dao/admin-dao');
 const allDao = require('../dao/admin-login-log-dao');
+const arrDao = require('../dao/admin-role-relation-dao');
+const aprDao = require('../dao/admin-permission-relation-dao');
 const account = require('../util/account-util');
 const jwt = require('jsonwebtoken');
 const doc = require('../conf/doc');
@@ -113,9 +115,47 @@ const mlService = {
         }
         return result;
     },
-    updateRole(adminId,roleIds){
-        let result = {status: true};
-        
+    //修改用户下角色信息
+    updateRole: async (adminId, roleIds) => {
+        //删除旧关联
+        arrDao.deleteByAdminId(adminId);
+        let list = [];
+        roleIds.map(x => list.push({adminId, roleId: x}));
+        let {affectedRows} = await arrDao.insertList(list);
+        return Promise.resolve(affectedRows);
+    },
+    //获取用户下的角色列表
+    roleList(adminId) {
+        return arrDao.roleList(adminId);
+    },
+    //修改用户下的权限
+    updatePermission: async (adminId, permissionIds) => {
+        //删除旧关联
+        aprDao.deleteByAdminId(adminId);
+        let permissionList = await arrDao.rolePermissionList(adminId);
+        let rolePermissionList = permissionList.filter(x => x.id);
+        let list = [];
+        if (permissionIds) {
+            //筛选+权限
+            let addPermissionIdList = permissionIds.filter(x => rolePermissionList.indexOf(x) < 0);
+            //筛选-权限
+            let subPermissionIdList = permissionList.filter(x => permissionIds.indexOf(x) < 0);
+            list.splice(mlService.convert(adminId, 1, addPermissionIdList));
+            list.splice(mlService.convert(adminId, -1, subPermissionIdList));
+            return aprDao.insertList(list);
+        }
+        return 0;
+    },
+    //筛选
+    convert(adminId, type, permissionIdList) {
+        let list = [];
+        let relation = {adminId, type};
+        permissionIdList.map(x => {
+            let permission = {...relation};
+            permission.permissionId = x;
+            list.push(permission);
+        });
+        return list;
     },
 };
 module.exports = mlService;

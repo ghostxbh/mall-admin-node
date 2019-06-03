@@ -295,7 +295,7 @@ router.post('/delete/:id', function (req, res, next) {
  * @api {post} /admin/role/update 给用户分配角色
  * @apiGroup admin
  * @apiVersion 1.0.0
- * @apiName role
+ * @apiName role-update
  * @apiParam {Number} [adminId] adminId
  * @apiParam {Array} [roleIds] 角色ID组
  * @apiSuccessExample {json} Success-Response:
@@ -317,8 +317,69 @@ router.post('/role/update', function (req, res, next) {
     let {adminId, roleIds} = req.query;
     adminService.updateRole(adminId, roleIds).then(value => {
         if (value) {
-            res.json(result.pageSuccess(value.data));
-        } else res.json(result.failed(value.data));
+            res.json(result.pageSuccess(value));
+        } else res.json(result.failed());
+    }).catch(e => res.json(result.exceptionFailed(e.message)));
+});
+
+/**
+ * @api {get} /admin/role/{adminId} 获取指定用户的角色
+ * @apiGroup admin
+ * @apiVersion 1.0.0
+ * @apiName role-adminId
+ * @apiParam {Number} [adminId] adminId
+ * @apiSuccessExample {json} Success-Response:
+ *  HTTP/1.1 200 OK
+ * {
+ *  "code": 200,
+ *  "message": "操作成功",
+ *  "data": Map
+ * }
+ * @apiErrorExample {json} Error-Response:
+ *  HTTP/1.1 500 error
+ * {
+ *  "code": 500,
+ *  "message": "操作失败",
+ * }
+ * @apiSampleRequest /admin/role/:adminId
+ */
+router.get('/role/:adminId', function (req, res, next) {
+    let {adminId} = req.params;
+    adminService.roleList(adminId).then(value => {
+        if (value) {
+            res.json(result.pageSuccess(value));
+        } else res.json(result.failed());
+    }).catch(e => res.json(result.exceptionFailed(e.message)));
+});
+
+/**
+ * @api {post} /admin/permission/update 获取指定用户的角色
+ * @apiGroup admin
+ * @apiVersion 1.0.0
+ * @apiName permission-update
+ * @apiParam {Number} [adminId] adminId
+ * @apiParam {Array} [permissionIds] permissionIds
+ * @apiSuccessExample {json} Success-Response:
+ *  HTTP/1.1 200 OK
+ * {
+ *  "code": 200,
+ *  "message": "操作成功",
+ *  "data": Map
+ * }
+ * @apiErrorExample {json} Error-Response:
+ *  HTTP/1.1 500 error
+ * {
+ *  "code": 500,
+ *  "message": "操作失败",
+ * }
+ * @apiSampleRequest /admin/permission/update
+ */
+router.post('/permission/update', function (req, res, next) {
+    let {adminId, permissionIds} = req.query;
+    adminService.updatePermission(adminId, permissionIds).then(value => {
+        if (value) {
+            res.json(result.pageSuccess(value));
+        } else res.json(result.failed());
     }).catch(e => res.json(result.exceptionFailed(e.message)));
 });
 module.exports = router;
