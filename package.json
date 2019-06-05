@@ -1,6 +1,7 @@
 {
-  "name": "mall-node",
-  "version": "0.0.0",
+  "name": "mall-admin-node",
+  "version": "1.0.0",
+  "description": "mall-admin-node is a online shopping platform's admin manage",
   "private": true,
   "scripts": {
     "start": "node bin/mall-admin-node"
@@ -16,6 +17,24 @@
     "morgan": "~1.9.1",
     "mysql": "^2.17.1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ghostxbh/mall-admin-node.git"
+  },
+  "keywords": [
+    "nodejs",
+    "mall",
+    "mysql",
+    "admin",
+    "online",
+    "platform"
+  ],
+  "author": "Xu Benhao",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ghostxbh/mall-admin-node/issues"
+  },
+  "homepage": "https://github.com/ghostxbh/mall-admin-node#readme",
   "apidoc": {
     "title": "mall-admin-api",
     "description": "商城后台管理接口文档",
