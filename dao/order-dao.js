@@ -3,7 +3,7 @@
  */
 const Mysql = require('../util/mysql-util');
 
-const ooDao = {
+const orderDao = {
     //条件查询订单
     list(queryParam) {
         let where = 'where delete_status = 0';
@@ -38,4 +38,4 @@ const ooDao = {
     },
 };
 
-module.exports = ooDao;
+module.exports = orderDao;

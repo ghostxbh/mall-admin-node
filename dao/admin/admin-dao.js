@@ -1,7 +1,7 @@
 /**
  * Create by xbh 2019-05-31 admin CRUD
  */
-const Mysql = require('../util/mysql-util');
+const Mysql = require('../../util/mysql-util');
 const fields = `id,username,password,icon,email,nick_name as nickName,note,create_time as createTime,login_time as loginTime,status`;
 const adminDao = {
     //增

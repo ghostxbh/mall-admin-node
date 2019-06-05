@@ -1,7 +1,7 @@
 /**
  * Create by xbh 2019-05-31
  */
-const Mysql = require('../util/mysql-util');
+const Mysql = require('../../util/mysql-util');
 const fields = `id, admin_id, create_time, ip, address, user_agent`;
 
 const allDao = {

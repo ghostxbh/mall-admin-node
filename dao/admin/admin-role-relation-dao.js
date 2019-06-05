@@ -1,7 +1,7 @@
 /**
  * Create by xbh 2019-06-03
  */
-const Mysql = require('../util/mysql-util');
+const Mysql = require('../../util/mysql-util');
 const fields = `id, admin_id, role_id`;
 const arrDao = {
     //删除admin旧关联

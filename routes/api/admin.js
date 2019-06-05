@@ -64,7 +64,7 @@ router.post('/register', function (req, res, next) {
  */
 router.post('/login', function (req, res, next) {
     let {username, password} = req.body;
-    adminService.login(username, password).then(value => {
+    adminService.login(req,username, password).then(value => {
         if (value.status) {
             let tokenMap = new Map();
             tokenMap.set("token", value.data);

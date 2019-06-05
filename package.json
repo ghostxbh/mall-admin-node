@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node bin/mall-node"
+    "start": "node bin/mall-admin-node"
   },
   "dependencies": {
     "apidoc": "^0.17.7",

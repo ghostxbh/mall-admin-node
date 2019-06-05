@@ -6,11 +6,9 @@ const fields = 'id,name,growth_point,default_status,free_freight_point,comment_g
     'priviledge_member_price,priviledge_birthday, note';
 const Mysql = require('../util/mysql-util');
 
-const mlDao = {
+module.exports = {
     list(defaultStatus) {
         let sql = `select ${fields} from ums_member_level where default_status=?`;
         return Mysql.fetch(sql, [defaultStatus]);
     }
 };
-
-module.exports = mlDao;

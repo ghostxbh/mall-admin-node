@@ -1,15 +1,15 @@
 /**
  * Create by xbh 2019-05-31 admin账户相关
  */
-const adminDao = require('../dao/admin-dao');
-const allDao = require('../dao/admin-login-log-dao');
-const arrDao = require('../dao/admin-role-relation-dao');
-const aprDao = require('../dao/admin-permission-relation-dao');
+const adminDao = require('../dao/admin/admin-dao');
+const adminLoginLogDao = require('../dao/admin/admin-login-log-dao');
+const adminRoleRelationDao = require('../dao/admin/admin-role-relation-dao');
+const adminPermissionRelationDao = require('../dao/admin/admin-permission-relation-dao');
 const account = require('../util/account-util');
 const jwt = require('jsonwebtoken');
 const doc = require('../conf/doc');
 
-const mlService = {
+const adminService = {
     //注册
     register: async (admin) => {
         let result = {status: true};
@@ -46,8 +46,8 @@ const mlService = {
             //加密admin - token
             let token = jwt.sign({username: username}, doc.jwt.secret, {expiresIn: doc.jwt.expiration});
             console.log('token生成：%s', token);
-            mlService.updateLoginTime(admin.username);
-            mlService.insertLoginLog(req, admin);
+            adminService.updateLoginTime(admin.username);
+            adminService.insertLoginLog(req, admin);
             result.data = token;
         }
         return result;
@@ -62,7 +62,7 @@ const mlService = {
         let ip = account.getClientIp(req);
         let createTime = new Date();
         let loginLog = {ip, createTime, adminId: admin.id};
-        return allDao.insert(loginLog);
+        return adminLoginLogDao.insert(loginLog);
     },
     //TODO 刷新token
     refreshToken(oldToken) {
@@ -118,21 +118,21 @@ const mlService = {
     //修改用户下角色信息
     updateRole: async (adminId, roleIds) => {
         //删除旧关联
-        arrDao.deleteByAdminId(adminId);
+        adminRoleRelationDao.deleteByAdminId(adminId);
         let list = [];
         roleIds.map(x => list.push({adminId, roleId: x}));
-        let {affectedRows} = await arrDao.insertList(list);
+        let {affectedRows} = await adminRoleRelationDao.insertList(list);
         return Promise.resolve(affectedRows);
     },
     //获取用户下的角色列表
     roleList(adminId) {
-        return arrDao.roleList(adminId);
+        return adminRoleRelationDao.roleList(adminId);
     },
     //修改用户下的权限
     updatePermission: async (adminId, permissionIds) => {
         //删除旧关联
-        aprDao.deleteByAdminId(adminId);
-        let permissionList = await arrDao.rolePermissionList(adminId);
+        adminPermissionRelationDao.deleteByAdminId(adminId);
+        let permissionList = await adminRoleRelationDao.rolePermissionList(adminId);
         let rolePermissionList = permissionList.filter(x => x.id);
         let list = [];
         if (permissionIds) {
@@ -140,9 +140,9 @@ const mlService = {
             let addPermissionIdList = permissionIds.filter(x => rolePermissionList.indexOf(x) < 0);
             //筛选-权限
             let subPermissionIdList = permissionList.filter(x => permissionIds.indexOf(x) < 0);
-            list.splice(mlService.convert(adminId, 1, addPermissionIdList));
-            list.splice(mlService.convert(adminId, -1, subPermissionIdList));
-            return aprDao.insertList(list);
+            list.splice(adminService.convert(adminId, 1, addPermissionIdList));
+            list.splice(adminService.convert(adminId, -1, subPermissionIdList));
+            return adminPermissionRelationDao.insertList(list);
         }
         return 0;
     },
@@ -158,4 +158,4 @@ const mlService = {
         return list;
     },
 };
-module.exports = mlService;
+module.exports = adminService;

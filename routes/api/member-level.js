@@ -4,7 +4,7 @@
 var express = require('express');
 var router = express.Router();
 const result = require('../../model/common-result');
-const mlService = require('../../service/member-level-service');
+const memberLevelService = require('../../service/member-level-service');
 /**
  * @api {get} /memberLevel/list 获取所有权限列表
  * @apiGroup memberLevel
@@ -28,7 +28,7 @@ const mlService = require('../../service/member-level-service');
  */
 router.get('/list', function (req, res, next) {
     let {defaultStatus} = req.query;
-    mlService.list(defaultStatus).then(data => {
+    memberLevelService.list(defaultStatus).then(data => {
         if (data) res.json(result.success(data));
     }).catch(e => res.json(result.exceptionFailed(e.message)));
 });

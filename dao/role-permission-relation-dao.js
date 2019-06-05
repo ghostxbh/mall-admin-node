@@ -3,7 +3,7 @@
  */
 const Mysql = require('../util/mysql-util');
 
-const rprDao = {
+const rolePermissionRelationDao = {
     insertList(list) {
         let value = list.map(x => `(${x.roleId},${x.permissionId})`).join(',');
         let sql = `insert into ums_role_permission_relation (role_id, permission_id) values (${value})`;
@@ -19,4 +19,4 @@ const rprDao = {
     },
 };
 
-module.exports = rprDao;
+module.exports = rolePermissionRelationDao;
