@@ -34,14 +34,18 @@ const jwt = require('../../conf/doc').jwt;
  */
 router.post('/register', function (req, res, next) {
     let admin = req.body;
-    adminService.register(admin).then(data => {
-        if (data.status) res.json(result.success(data.data));
-        else res.json(result.failed(data.data));
-    }).catch(e => res.json(result.exceptionFailed(e.message)));
+    if (admin.username && admin.password) {
+        adminService.register(admin).then(data => {
+            if (data.status) res.json(result.success(data.data));
+            else res.json(result.failed(data.data));
+        }).catch(e => res.json(result.exceptionFailed(e.message)));
+    } else {
+        res.json(result.validateFailed('未输入用户名/密码必填选项'))
+    }
 });
 
 /**
- * @api {post} /admin/login 登录=>token
+ * @api {post} /admin/login 登录并返回token
  * @apiGroup admin
  * @apiVersion 1.0.0
  * @apiName login
@@ -64,14 +68,18 @@ router.post('/register', function (req, res, next) {
  */
 router.post('/login', function (req, res, next) {
     let {username, password} = req.body;
-    adminService.login(req,username, password).then(value => {
-        if (value.status) {
-            let tokenMap = new Map();
-            tokenMap.set("token", value.data);
-            tokenMap.set("tokenHead", jwt.tokenHead);
-            res.json(result.success(tokenMap));
-        } else res.json(result.failed(value.data));
-    }).catch(e => res.json(result.exceptionFailed(e.message)));
+    if (username && password) {
+        adminService.login(req, username, password).then(value => {
+            if (value.status) {
+                let tokenMap = new Map();
+                tokenMap.set("token", value.data);
+                tokenMap.set("tokenHead", jwt.tokenHead);
+                res.json(result.success(tokenMap));
+            } else res.json(result.failed(value.data));
+        }).catch(e => res.json(result.exceptionFailed(e.message)));
+    } else {
+        res.json(result.validateFailed('未输入用户名/密码'));
+    }
 });
 
 /**
@@ -164,13 +172,13 @@ router.post('/logout', function (req, res, next) {
 });
 
 /**
- * @api {get} /admin/list 根据用户名或姓名分页获取用户列表
+ * @api {get} /admin/list 获取用户列表
  * @apiGroup admin
  * @apiVersion 1.0.0
  * @apiName list
  * @apiParam {String} [name] 用户名/昵称
- * @apiParam {Number} [pageSize] 条数
  * @apiParam {Number} [pageNum] 页数
+ * @apiParam {Number} [pageSize] 条数
  * @apiSuccessExample {json} Success-Response:
  *  HTTP/1.1 200 OK
  * {
@@ -187,8 +195,8 @@ router.post('/logout', function (req, res, next) {
  * @apiSampleRequest /admin/list
  */
 router.get('/list', function (req, res, next) {
-    let {name, pageSize, pageNum} = req.query;
-    adminService.list(name, pageSize, pageNum).then(value => {
+    let {name, pageNum, pageSize} = req.query;
+    adminService.list(name, pageNum, pageSize).then(value => {
         if (value.status) {
             res.json(result.pageSuccess(value.data));
         } else res.json(result.failed(value.data));
@@ -256,13 +264,13 @@ router.post('/update/:id', function (req, res, next) {
     let admin = req.body;
     adminService.update(id, admin).then(value => {
         if (value) {
-            res.json(result.pageSuccess(value));
+            res.json(result.success(value));
         } else res.json(result.failed());
     }).catch(e => res.json(result.exceptionFailed(e.message)));
 });
 
 /**
- * @api {post} /admin/delete/{id} 修改指定用户信息
+ * @api {post} /admin/delete/{id} 删除指定用户信息
  * @apiGroup admin
  * @apiVersion 1.0.0
  * @apiName delete
@@ -286,7 +294,7 @@ router.post('/delete/:id', function (req, res, next) {
     let {id} = req.params;
     adminService.delete(id).then(value => {
         if (value) {
-            res.json(result.pageSuccess(value.data));
+            res.json(result.success(value.data));
         } else res.json(result.failed(value.data));
     }).catch(e => res.json(result.exceptionFailed(e.message)));
 });
@@ -317,7 +325,7 @@ router.post('/role/update', function (req, res, next) {
     let {adminId, roleIds} = req.query;
     adminService.updateRole(adminId, roleIds).then(value => {
         if (value) {
-            res.json(result.pageSuccess(value));
+            res.json(result.success(value));
         } else res.json(result.failed());
     }).catch(e => res.json(result.exceptionFailed(e.message)));
 });
@@ -347,13 +355,13 @@ router.get('/role/:adminId', function (req, res, next) {
     let {adminId} = req.params;
     adminService.roleList(adminId).then(value => {
         if (value) {
-            res.json(result.pageSuccess(value));
+            res.json(result.success(value));
         } else res.json(result.failed());
     }).catch(e => res.json(result.exceptionFailed(e.message)));
 });
 
 /**
- * @api {post} /admin/permission/update 获取指定用户的角色
+ * @api {post} /admin/permission/update 修改指定用户的权限
  * @apiGroup admin
  * @apiVersion 1.0.0
  * @apiName permission-update
@@ -378,7 +386,37 @@ router.post('/permission/update', function (req, res, next) {
     let {adminId, permissionIds} = req.query;
     adminService.updatePermission(adminId, permissionIds).then(value => {
         if (value) {
-            res.json(result.pageSuccess(value));
+            res.json(result.success(value));
+        } else res.json(result.failed());
+    }).catch(e => res.json(result.exceptionFailed(e.message)));
+});
+
+/**
+ * @api {get} /admin/permission/{adminId} 获取指定用户的权限
+ * @apiGroup admin
+ * @apiVersion 1.0.0
+ * @apiName permission-adminId
+ * @apiParam {Number} [adminId] adminId
+ * @apiSuccessExample {json} Success-Response:
+ *  HTTP/1.1 200 OK
+ * {
+ *  "code": 200,
+ *  "message": "操作成功",
+ *  "data": Map
+ * }
+ * @apiErrorExample {json} Error-Response:
+ *  HTTP/1.1 500 error
+ * {
+ *  "code": 500,
+ *  "message": "操作失败",
+ * }
+ * @apiSampleRequest /admin/permission/:adminId
+ */
+router.get('/permission/:adminId', function (req, res, next) {
+    let {adminId} = req.params;
+    adminService.permissionList(adminId).then(value => {
+        if (value) {
+            res.json(result.success(value));
         } else res.json(result.failed());
     }).catch(e => res.json(result.exceptionFailed(e.message)));
 });

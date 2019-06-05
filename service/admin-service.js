@@ -78,13 +78,13 @@ const adminService = {
         return Promise.resolve(admin)
     },
     //列表
-    list: async (name, pageSize, pageNum) => {
+    list: async (name, pageNum, pageSize) => {
         //处理字符串问题
         if (typeof pageSize === "string") pageSize = parseInt(pageSize);
         if (typeof pageNum === "string") pageNum = parseInt(pageNum);
         //配置分页数据
-        let result = {status: true, data: {pageSize, pageNum}};
-        let [list, [total]] = adminDao.listByName(name, pageSize, pageNum);
+        let result = {status: true, data: {pageNum, pageSize}};
+        let [list, [total]] = await adminDao.listByName(name, pageSize, pageNum);
         if (list) {
             result.data.list = list;
             result.data.total = total.count;
@@ -93,7 +93,7 @@ const adminService = {
             result.status = false;
             result.data = '查询列表失败';
         }
-        return Promise.resolve(data);
+        return Promise.resolve(result);
     },
     //用户信息
     adminById(id) {
@@ -156,6 +156,9 @@ const adminService = {
             list.push(permission);
         });
         return list;
+    },
+    permissionList(adminId) {
+        return adminPermissionRelationDao.permissionList(adminId);
     },
 };
 module.exports = adminService;

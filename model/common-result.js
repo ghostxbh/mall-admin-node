@@ -39,7 +39,7 @@ function pageSuccess(data) {
     result.message = '操作成功';
     let map = new Map();
     map.set('pageSize', data.pageSize);
-    map.set('totalPage', data.pages);
+    map.set('totalPage', data.totalPage);
     map.set('total', data.total);
     map.set('pageNum', data.pageNum);
     map.set('list', data.list);
