@@ -1,7 +1,7 @@
 /**
  * Create by xbh 2019-05-30 ums_role_permission_relation表CURD
  */
-const Mysql = require('../util/mysql-util');
+const Mysql = require('../../util/mysql-util');
 
 const rolePermissionRelationDao = {
     insertList(list) {

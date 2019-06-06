@@ -2,7 +2,7 @@
  * Create by xbh 2019-05-29 role CRUD
  */
 const fields = 'id,name,description,admin_count,create_time,status,sort';
-const Mysql = require('../util/mysql-util');
+const Mysql = require('../../util/mysql-util');
 
 const roleDao = {
     //增
