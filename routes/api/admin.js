@@ -17,6 +17,15 @@ const jwt = require('../../conf/doc').jwt;
  * @apiParam {String} [email] 邮箱
  * @apiParam {String} [nickName] 昵称
  * @apiParam {String} [note] 备注信息
+ * @apiParamExample {json} Request-Example:
+ * {
+ *     "username":"test123",
+ *     "password":"test123",
+ *     "icon":,
+ *     "email":"test@mail.com",
+ *     "nickName":"测试帐号",
+ *     "note":"测试使用帐号",
+ * }
  * @apiSuccessExample {json} Success-Response:
  *  HTTP/1.1 200 OK
  * {

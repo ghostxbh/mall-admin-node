@@ -1,8 +1,8 @@
 /**
  * Create by xbh 2019-05-29
  */
-const roleDao = require('../dao/role-dao');
-const rolePermissionRelationDao = require('../dao/role-permission-relation-dao');
+const roleDao = require('../dao/role/role-dao');
+const rolePermissionRelationDao = require('../dao/role/role-permission-relation-dao');
 const roleService = {
     //添加角色
     create(role) {
