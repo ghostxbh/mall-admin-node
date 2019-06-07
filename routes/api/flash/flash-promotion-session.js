@@ -196,7 +196,7 @@ router.get('/list', function (req, res, next) {
 });
 
 /**
- * @api {get} /flashSession/selectList 获取全部可选场次及其数量
+ * @api {get} /flashSession/selectList 全部可选场次及其数量
  * @apiGroup flashSession
  * @apiVersion 1.0.0
  * @apiName selectList
