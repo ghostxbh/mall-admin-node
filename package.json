@@ -39,7 +39,7 @@
     "title": "mall-admin-api",
     "description": "商城后台管理接口文档",
     "version": "1.0.0",
-    "url": "http://127.0.0.1:3000",
+    "url": "http://127.0.0.1:9001",
     "header": {
       "title": ""
     },
