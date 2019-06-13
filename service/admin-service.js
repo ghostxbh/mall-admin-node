@@ -5,7 +5,7 @@ const adminDao = require('../dao/admin/admin-dao');
 const adminLoginLogDao = require('../dao/admin/admin-login-log-dao');
 const adminRoleRelationDao = require('../dao/admin/admin-role-relation-dao');
 const adminPermissionRelationDao = require('../dao/admin/admin-permission-relation-dao');
-const account = require('../util/account-util');
+const account = require('../util/encryption');
 const jwt = require('jsonwebtoken');
 const doc = require('../conf/doc');
 
