@@ -1,5 +1,5 @@
 {
   "name": "mall-node",
-  "port": 9001,
+  "port": 8901,
   "description": "商城后端接口node版"
 }
